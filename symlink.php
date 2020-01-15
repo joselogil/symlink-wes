@@ -246,9 +246,33 @@ function af_rule() {
 
         add_filter('body_class', 'af_class');
     }
+
+    function aff_styles() {
+        
+        $styles = 'affiliate-show {
+            display:none;
+        }
+        .affiliate-page affiliate-hide{
+            display:none;
+        }
+        .affiliate-page affiliate-show{
+            display:initial;
+        }
+        '
+        ;
+        
+        echo '<style type="text/css">';
+        echo $styles;
+        echo '</style>';
+
+    }
+    add_action('wp_head', 'aff_styles', 100);
 }
 
+$current_url = get_option('current_url');
+if ($current_url) :
 add_action('init', 'af_rule');
+endif;
 
 //setting link
 function symlinks_settings_link( $links ) {
