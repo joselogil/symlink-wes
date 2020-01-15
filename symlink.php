@@ -249,13 +249,13 @@ function af_rule() {
 
     function aff_styles() {
         
-        $styles = 'affiliate-show {
+        $styles = '.affiliate-show {
             display:none;
         }
-        .affiliate-page affiliate-hide{
+        .affiliate-page .affiliate-hide{
             display:none;
         }
-        .affiliate-page affiliate-show{
+        .affiliate-page .affiliate-show{
             display:initial;
         }
         '
