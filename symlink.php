@@ -166,7 +166,7 @@ function program_slug( $post_link, $post ) {
     }
     return $post_link;
 }
-add_filter( 'post_type_link', 'program_slug', 10, 2 );
+
 
 function program_main_query( $query ) {
 	// Bail if this is not the main query.
@@ -186,6 +186,7 @@ function program_main_query( $query ) {
 }
 //if checked
 if ($remove) :
+add_filter( 'post_type_link', 'program_slug', 10, 2 );
 add_action( 'pre_get_posts', 'program_main_query' );
 endif;
 
