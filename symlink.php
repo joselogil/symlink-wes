@@ -108,26 +108,26 @@ function symlinks_page() { ?>
                             
                             foreach ($val as $val_key => $val_val) {
                                 if(!empty($val_val)) {
-                                    echo '<tr>';
+                                    echo '<tr class="urls">';
                                     echo '<td><div><input type="text" name="current_url[]" value="'.$key.'"/></div></td>';
-                                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$val_val.'"/> <button class="add-id">+</button></div></td>';
+                                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$val_val.'"/> <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                                     echo '</tr>';
                                 }
                             }
 
                         } elseif (!empty($val)) {
-                            echo '<tr>';
+                            echo '<tr class="urls">';
                             echo '<td><div><input type="text" name="current_url[]" value="'.$key.'"/></div></td>';
-                            echo '<td><div><input type="text" name="symlink_url[]" value="'.$val.'"/> <button class="add-id">+</button></div></td>';
+                            echo '<td><div><input type="text" name="symlink_url[]" value="'.$val.'"/> <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                             echo '</tr>';
                         }
                     }
 
                 } else {
 
-                    echo '<tr>';
-                    echo '<td><input type="text" name="current_url[]" value="'.$urls[0].'"/></td>';
-                    echo '<td><input type="text" name="symlink_url[]" value="'.$symlink_urls[0].'"/></td>';
+                    echo '<tr class="urls">';
+                    echo '<td><div><input type="text" name="current_url[]" value="'.$urls[0].'"/></div></td>';
+                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$symlink_urls[0].'"/><button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                     echo '</tr>';
 
                 }
@@ -137,14 +137,45 @@ function symlinks_page() { ?>
                 <script type="text/javascript">
                     jQuery.noConflict();
                     jQuery(document).ready(function ($) {
+                        function tr_count(){
+                            $count = $('tr.urls').length;
+                            
+                            if($count == 1) {
+                                console.log('if')
+                                $('.kill-id').attr('disabled', 'disabled').css('opacity', '0.375');
+                            } else {
+                                $('.kill-id').removeAttr('disabled', 'disabled').css('opacity', '1');
+                            }
+                            
+                        }
+
                         function clone(){
                             $('.add-id').click(function(){
                                 $parent = $(this).parents('tr');
+
                                 $parent.clone(true).addClass('cloned').find("input:text").val("").end().insertAfter($parent);
+                                tr_count()
+
                                 return false;
                             })
                         }
-                        clone();  
+                        
+                        function kill(){
+                            $('.kill-id').click(function(){
+                                $parent = $(this).parents('tr');
+
+                                $parent.find("input:text").val("");
+                                $parent.remove();
+
+                                tr_count()
+                                
+                                return false;
+                            })
+                        }
+
+                        tr_count();
+                        clone(); 
+                        kill();  
                     });
                 </script>
 
@@ -166,7 +197,6 @@ function program_slug( $post_link, $post ) {
     }
     return $post_link;
 }
-
 
 function program_main_query( $query ) {
 	// Bail if this is not the main query.
@@ -239,6 +269,7 @@ function af_rule() {
     $url = add_query_arg( $wp->query_vars);
     
     if(substr($url , -4)=='-af/'){
+        
         function af_class($classes) {
             $classes[] = 'affiliate-page';
             return $classes;
@@ -260,7 +291,7 @@ function af_rule() {
         }
         '
         ;
-        
+
         echo '<style type="text/css">';
         echo $styles;
         echo '</style>';
@@ -269,10 +300,7 @@ function af_rule() {
     add_action('wp_head', 'aff_styles', 100);
 }
 
-$current_url = get_option('current_url');
-if ($current_url) :
 add_action('init', 'af_rule');
-endif;
 
 //setting link
 function symlinks_settings_link( $links ) {
