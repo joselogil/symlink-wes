@@ -283,7 +283,8 @@ function af_rule() {
         $styles = '.affiliate-show {
             display:none;
         }
-        .affiliate-page .affiliate-hide{
+        .affiliate-page .affiliate-hide,
+        .affiliate-page .affiliate-only{
             display:none;
         }
         .affiliate-page .affiliate-show{
