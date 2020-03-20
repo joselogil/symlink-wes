@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Symlinks Builder - WES
-Description: Create an alias -or multiple- for an existing program & Disable /programs/ from url
-Version: 0.0.1
+Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
+Version: 0.0.2
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
@@ -38,6 +38,7 @@ function update_symlinks() {
     register_setting( 'symlinks-settings', 'remove_programs' );
     register_setting( 'symlinks-settings', 'current_url' );
     register_setting( 'symlinks-settings', 'symlink_url' );
+    register_setting( 'symlinks-settings', 'enabled' );
 }
 
 // Create WordPress plugin page
@@ -73,24 +74,25 @@ function symlinks_page() { ?>
             <table class="form-table">
 
                 <tr>
-                    <th colspan="2" style="background:#23282d;padding:10px;color:#fff"><strong>Remove <em>/programs/</em> from url</strong></th>
+                    <th colspan="3" style="background:#23282d;padding:10px;color:#fff"><strong>Remove <em>/programs/</em> from url</strong></th>
                 </tr>
 
                 <tr>
-                    <td colspan="2">   
+                    <td colspan="3">   
                         <label>
                             <input type="checkbox" name="remove_programs" value="yes" <?php if($remove):echo 'checked';endif;?>>Yes
                         </label>
                     </td>
-                </tr>
+                </tr>   
 
                 <tr>
-                    <th colspan="2" style="background:#23282d;padding:10px;color:#fff"><strong>Symlinks Builder</strong></th>
+                    <th colspan="3" style="background:#23282d;padding:10px;color:#fff"><strong>Symlinks Builder</strong></th>
                 </tr>
 
                 <tr>
                     <td><strong>Current Url</strong></td>
                     <td><strong>Symlink Url</strong></td>
+                    <td><strong>Post Type</strong></td>
                 </tr>
                 
                 <?php
@@ -99,6 +101,8 @@ function symlinks_page() { ?>
                 //print_r($final);
                 //print_r($remove);
                 //echo '</pre>';
+                $post_types = get_post_types( array( "public" => true ), 'names' );
+                $test = get_option( 'enabled' );
 
                 if (!empty(array_filter($final))) {
                     
@@ -110,7 +114,17 @@ function symlinks_page() { ?>
                                 if(!empty($val_val)) {
                                     echo '<tr class="urls">';
                                     echo '<td><div><input type="text" name="current_url[]" value="'.$key.'"/></div></td>';
-                                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$val_val.'"/> <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
+                                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$val_val.'"/></div></td>';
+                                    echo '<td><div><select name="enabled['.$val_val.'][]"><option value> -- select an option -- </option>';
+                                    foreach ( $post_types as $post_type ) {
+                                        if ( in_array($post_type, get_option('enabled')[$val_val] )) {    
+                                            echo '<option selected value="'.$post_type.'">'.$post_type.'</option>';
+                                        } else {
+                                            echo '<option value="'.$post_type.'">'.$post_type.'</option>';
+                                        }
+                                    }
+                                    echo '</select>';
+                                    echo' <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                                     echo '</tr>';
                                 }
                             }
@@ -118,7 +132,17 @@ function symlinks_page() { ?>
                         } elseif (!empty($val)) {
                             echo '<tr class="urls">';
                             echo '<td><div><input type="text" name="current_url[]" value="'.$key.'"/></div></td>';
-                            echo '<td><div><input type="text" name="symlink_url[]" value="'.$val.'"/> <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
+                            echo '<td><div><input type="text" name="symlink_url[]" value="'.$val.'"/></div></td>';
+                            echo '<td><div><select name="enabled['.$val.'][]"><option value> -- select an option -- </option>';
+                            foreach ( $post_types as $post_type ) {
+                                if ( in_array($post_type, get_option('enabled')[$val] )) {    
+                                    echo '<option selected value="'.$post_type.'">'.$post_type.'</option>';
+                                } else {
+                                    echo '<option value="'.$post_type.'">'.$post_type.'</option>';
+                                }
+                            }
+                            echo '</select>';
+                            echo' <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                             echo '</tr>';
                         }
                     }
@@ -127,7 +151,13 @@ function symlinks_page() { ?>
 
                     echo '<tr class="urls">';
                     echo '<td><div><input type="text" name="current_url[]" value="'.$urls[0].'"/></div></td>';
-                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$symlink_urls[0].'"/><button class="add-id">+</button><button class="kill-id">-</button></div></td>';
+                    echo '<td><div><input type="text" name="symlink_url[]" value="'.$symlink_urls[0].'"/></div></td>';
+                    echo '<td><div><select name="enabled['.$val.'][]"><option value> -- select an option -- </option>';
+                    foreach ( $post_types as $post_type ) {
+                        echo '<option value="'.$post_type.'">'.$post_type.'</option>';
+                    }
+                    echo '</select>';
+                    echo ' <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
                     echo '</tr>';
 
                 }
@@ -141,7 +171,7 @@ function symlinks_page() { ?>
                             $count = $('tr.urls').length;
                             
                             if($count == 1) {
-                                console.log('if')
+                                //console.log('if')
                                 $('.kill-id').attr('disabled', 'disabled').css('opacity', '0.375');
                             } else {
                                 $('.kill-id').removeAttr('disabled', 'disabled').css('opacity', '1');
@@ -173,9 +203,19 @@ function symlinks_page() { ?>
                             })
                         }
 
+                        function updt_select() {
+                            $("input[name^='symlink_url']").on('keyup change', function (){
+                                $val = $(this).val();
+                                $parent = $(this).parents('tr');
+
+                                $parent.find('select').attr('name', 'enabled['+$val+'][]');
+                            });
+                        }
+
                         tr_count();
                         clone(); 
-                        kill();  
+                        kill(); 
+                        updt_select(); 
                     });
                 </script>
 
@@ -184,6 +224,7 @@ function symlinks_page() { ?>
         </form>
         
     </div>
+    <?php flush_rewrite_rules(); ?>
 <?php }
 
 //
@@ -212,7 +253,7 @@ function program_main_query( $query ) {
 		return;
 	}
 	// Add CPT to the list of post types WP will include when it queries based on the post name.
-	$query->set( 'post_type', array( 'post', 'page', 'degree' ) );
+	$query->set( 'post_type', array( 'post', 'page', 'degree', 'degrees','landing-page' ) );
 }
 //if checked
 if ($remove) :
@@ -225,10 +266,12 @@ endif;
 //only programs
 //todo: make it  work with any content type
 //
-function af_rule() {
+function af_rule() {    
 
     $urls = get_option('current_url');
     $symlink_urls = get_option('symlink_url');
+    
+
     function array_combine_rule($keys, $values) {
         $result = array();
                 
@@ -243,7 +286,7 @@ function af_rule() {
         return $result;
     }
     $final = array_combine_rule($urls, $symlink_urls);
-    
+
     if (!empty(array_filter($final))) {
 
         foreach ($final as $key => $val) {
@@ -252,17 +295,21 @@ function af_rule() {
 
                 foreach ($val as $val_key => $val_val) {
                     if(!empty($val_val)) {
-                        add_rewrite_rule($val_val, 'index.php?degree='.$key, 'top');
+                        
+                        add_rewrite_rule($val_val, 'index.php?'.get_option('enabled')[$val_val][0].'='.$key, 'top');
+                        //echo get_option('enabled')[$val_val][0];
                     }
                 }
 
             } elseif (!empty($val)) {
-
-                add_rewrite_rule($val, 'index.php?degree='.$key, 'top');
-
+                
+                add_rewrite_rule($val, 'index.php?'.get_option('enabled')[$val][0].'='.$key, 'top');
+                //echo get_option('enabled')[$val][0];
             }
 
         }
+
+        
     }
     //add a class too
     global $wp;
