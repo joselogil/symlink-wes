@@ -296,14 +296,23 @@ function af_rule() {
                 foreach ($val as $val_key => $val_val) {
                     if(!empty($val_val)) {
                         
-                        add_rewrite_rule($val_val, 'index.php?'.get_option('enabled')[$val_val][0].'='.$key, 'top');
+                        if (get_option('enabled')[$val_val][0] == 'page') { 
+                            add_rewrite_rule($val_val, 'index.php?pagename='.$key, 'top');
+                        } else {
+                            add_rewrite_rule($val_val, 'index.php?'.get_option('enabled')[$val_val][0].'='.$key, 'top');
+                        }
                         //echo get_option('enabled')[$val_val][0];
                     }
                 }
 
             } elseif (!empty($val)) {
                 
-                add_rewrite_rule($val, 'index.php?'.get_option('enabled')[$val][0].'='.$key, 'top');
+                if (get_option('enabled')[$val][0] == 'page') {
+                    add_rewrite_rule($val, 'index.php?pagename='.$key, 'top');
+                } else {
+                    add_rewrite_rule($val, 'index.php?'.get_option('enabled')[$val][0].'='.$key, 'top');
+                }
+                
                 //echo get_option('enabled')[$val][0];
             }
 
