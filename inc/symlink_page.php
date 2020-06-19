@@ -40,7 +40,7 @@
             print '<tr class="urls">';
             print '<td><div><input type="text" name="current_url[]" value="'.$r['url'].'"/></div></td>';
             print '<td><div><input type="text" name="symlink_url[]" value="'.$r['symlink'].'"/></div></td>';
-            print '<td><div><select name="enabled['.$r['symlink'].'][]"><option value> -- select an option -- </option>';
+            print '<td><div><select name="enabled['.$r['symlink'].']"><option value> -- select an option -- </option>';
 
             foreach ( $post_types as $post_type ) {
                 if ( $post_type == $r['enabled'] ) {
@@ -59,7 +59,7 @@
           print '<tr class="urls">';
           print '<td><div><input type="text" name="current_url[]" value="'.$urls[0].'"/></div></td>';
           print '<td><div><input type="text" name="symlink_url[]" value="'.$symlink_urls[0].'"/></div></td>';
-          print '<td><div><select name="enabled['.$symlink_urls[0].'][]"><option value> -- select an option -- </option>';
+          print '<td><div><select name="enabled['.$symlink_urls[0].']"><option value> -- select an option -- </option>';
           foreach ( $post_types as $post_type ) {
             print '<option value="'.$post_type.'">'.$post_type.'</option>';
           }
