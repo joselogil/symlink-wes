@@ -1,7 +1,6 @@
 <?php
 
-global $wp;
-$url = add_query_arg( $wp->query_vars);
+$url = strtok($_SERVER['REQUEST_URI'], '?');
 
 if(substr($url , -4)=='-af/'){
 
