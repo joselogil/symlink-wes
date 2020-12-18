@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks Builder - WES
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 0.0.2
+Version: 1.1.3
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
@@ -321,10 +321,9 @@ function af_rule() {
 
     }
     //add a class too
-    global $wp;
-    $url = add_query_arg( $wp->query_vars);
+    $url = strtok($_SERVER['REQUEST_URI'], '?');
 
-    if(substr($url , -4)=='-af/'){
+    if( substr($url , -4) == '-af/' || substr($url , -5)=='-aff/' ) {
 
         function af_class($classes) {
             $classes[] = 'affiliate-page';
