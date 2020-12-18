@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks Builder - WES
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 1.1.3
+Version: 0.0.2
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
@@ -19,7 +19,7 @@ function symlinks_menu(){
     $function   = 'symlinks_page';
     $icon_url   = 'dashicons-media-code';
     $position   = 50;
-
+  
     add_options_page( $page_title,
                    $menu_title,
                    $capability,
@@ -27,7 +27,7 @@ function symlinks_menu(){
                    $function,
                    $icon_url,
                    $position );
-
+  
     // Call update_extra_post_info function to update database
     add_action( 'admin_init', 'update_symlinks' );
 }
@@ -45,12 +45,12 @@ function update_symlinks() {
 
 function symlinks_page() { ?>
     <div class="wrap" id="symlinks-wes">
-
+        
         <h1 class="wp-heading-inline">Symlinks Builder - WES</h1>
-
+        
         <form style="margin-top:1.75rem"method="post" action="options.php">
-            <?php
-                settings_fields('symlinks-settings');
+            <?php 
+                settings_fields('symlinks-settings'); 
                 do_settings_sections('symlinks-settings');
                 //
                 $remove = get_option('remove_programs');
@@ -58,15 +58,15 @@ function symlinks_page() { ?>
                 $symlink_urls = get_option('symlink_url');
                 function array_combine_($keys, $values) {
                     $result = array();
-
+                
                     foreach ($keys as $i => $k) {
                         $result[$k][] = $values[$i];
                     }
-
+                
                     array_walk($result, function (&$v) {
                         $v = (count($v) == 1) ? array_pop($v): $v;
                     });
-
+                
                     return $result;
                 }
                 $final = array_combine_($urls, $symlink_urls);
@@ -78,12 +78,12 @@ function symlinks_page() { ?>
                 </tr>
 
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3">   
                         <label>
                             <input type="checkbox" name="remove_programs" value="yes" <?php if($remove):echo 'checked';endif;?>>Yes
                         </label>
                     </td>
-                </tr>
+                </tr>   
 
                 <tr>
                     <th colspan="3" style="background:#23282d;padding:10px;color:#fff"><strong>Symlinks Builder</strong></th>
@@ -94,9 +94,9 @@ function symlinks_page() { ?>
                     <td><strong>Symlink Url</strong></td>
                     <td><strong>Post Type</strong></td>
                 </tr>
-
+                
                 <?php
-
+                
                 //echo '<pre>';
                 //print_r($final);
                 //print_r($remove);
@@ -105,11 +105,11 @@ function symlinks_page() { ?>
                 $test = get_option( 'enabled' );
 
                 if (!empty(array_filter($final))) {
-
+                    
                     foreach ($final as $key => $val) {
-
+                        
                         if (is_array($val)) {
-
+                            
                             foreach ($val as $val_key => $val_val) {
                                 if(!empty($val_val)) {
                                     echo '<tr class="urls">';
@@ -117,7 +117,7 @@ function symlinks_page() { ?>
                                     echo '<td><div><input type="text" name="symlink_url[]" value="'.$val_val.'"/></div></td>';
                                     echo '<td><div><select name="enabled['.$val_val.'][]"><option value> -- select an option -- </option>';
                                     foreach ( $post_types as $post_type ) {
-                                        if ( in_array($post_type, get_option('enabled')[$val_val] )) {
+                                        if ( in_array($post_type, get_option('enabled')[$val_val] )) {    
                                             echo '<option selected value="'.$post_type.'">'.$post_type.'</option>';
                                         } else {
                                             echo '<option value="'.$post_type.'">'.$post_type.'</option>';
@@ -135,7 +135,7 @@ function symlinks_page() { ?>
                             echo '<td><div><input type="text" name="symlink_url[]" value="'.$val.'"/></div></td>';
                             echo '<td><div><select name="enabled['.$val.'][]"><option value> -- select an option -- </option>';
                             foreach ( $post_types as $post_type ) {
-                                if ( in_array($post_type, get_option('enabled')[$val] )) {
+                                if ( in_array($post_type, get_option('enabled')[$val] )) {    
                                     echo '<option selected value="'.$post_type.'">'.$post_type.'</option>';
                                 } else {
                                     echo '<option value="'.$post_type.'">'.$post_type.'</option>';
@@ -169,14 +169,14 @@ function symlinks_page() { ?>
                     jQuery(document).ready(function ($) {
                         function tr_count(){
                             $count = $('tr.urls').length;
-
+                            
                             if($count == 1) {
                                 //console.log('if')
                                 $('.kill-id').attr('disabled', 'disabled').css('opacity', '0.375');
                             } else {
                                 $('.kill-id').removeAttr('disabled', 'disabled').css('opacity', '1');
                             }
-
+                            
                         }
 
                         function clone(){
@@ -189,7 +189,7 @@ function symlinks_page() { ?>
                                 return false;
                             })
                         }
-
+                        
                         function kill(){
                             $('.kill-id').click(function(){
                                 $parent = $(this).parents('tr');
@@ -198,7 +198,7 @@ function symlinks_page() { ?>
                                 $parent.remove();
 
                                 tr_count()
-
+                                
                                 return false;
                             })
                         }
@@ -213,16 +213,16 @@ function symlinks_page() { ?>
                         }
 
                         tr_count();
-                        clone();
-                        kill();
-                        updt_select();
+                        clone(); 
+                        kill(); 
+                        updt_select(); 
                     });
                 </script>
 
             </table>
             <?php submit_button(); ?>
         </form>
-
+        
     </div>
     <?php flush_rewrite_rules(); ?>
 <?php }
@@ -266,23 +266,23 @@ endif;
 //only programs
 //todo: make it  work with any content type
 //
-function af_rule() {
+function af_rule() {    
 
     $urls = get_option('current_url');
     $symlink_urls = get_option('symlink_url');
-
+    
 
     function array_combine_rule($keys, $values) {
         $result = array();
-
+                
         foreach ($keys as $i => $k) {
             $result[$k][] = $values[$i];
         }
-
+                
         array_walk($result, function (&$v) {
             $v = (count($v) == 1) ? array_pop($v): $v;
         });
-
+                
         return $result;
     }
     $final = array_combine_rule($urls, $symlink_urls);
@@ -295,8 +295,8 @@ function af_rule() {
 
                 foreach ($val as $val_key => $val_val) {
                     if(!empty($val_val)) {
-
-                        if (get_option('enabled')[$val_val][0] == 'page') {
+                        
+                        if (get_option('enabled')[$val_val][0] == 'page') { 
                             add_rewrite_rule($val_val, 'index.php?pagename='.$key, 'top');
                         } else {
                             add_rewrite_rule($val_val, 'index.php?'.get_option('enabled')[$val_val][0].'='.$key, 'top');
@@ -306,25 +306,24 @@ function af_rule() {
                 }
 
             } elseif (!empty($val)) {
-
+                
                 if (get_option('enabled')[$val][0] == 'page') {
                     add_rewrite_rule($val, 'index.php?pagename='.$key, 'top');
                 } else {
                     add_rewrite_rule($val, 'index.php?'.get_option('enabled')[$val][0].'='.$key, 'top');
                 }
-
+                
                 //echo get_option('enabled')[$val][0];
             }
 
         }
 
-
+        
     }
-    //add a class too
     $url = strtok($_SERVER['REQUEST_URI'], '?');
-
-    if( substr($url , -4) == '-af/' || substr($url , -5)=='-aff/' ) {
-
+    
+    if(substr($url , -4)=='-af/' || substr($url , -5)=='-aff/') {
+        
         function af_class($classes) {
             $classes[] = 'affiliate-page';
             return $classes;
@@ -334,7 +333,7 @@ function af_rule() {
     }
 
     function aff_styles() {
-
+        
         $styles = '.affiliate-show {
             display:none;
         }
@@ -352,29 +351,6 @@ function af_rule() {
         echo $styles;
         echo '</style>';
 
-        $js = '
-        document.addEventListener("DOMContentLoaded", function(){
-
-         var af_links = document.querySelectorAll(".affiliate-page .af-link");
-         for (var i = 0; i < af_links.length; i++) {
-
-           href = af_links[i].getAttribute("href");
-
-           if (href.endsWith("/")) {
-             href = href.slice(0, -1);
-           }
-
-           href = href + "-af/";
-           af_links[i].setAttribute("href", href);
-         }
-
-        });
-        ';
-
-        echo '<script type="text/javascript">';
-        echo $js;
-        echo '</script>';
-
     }
     add_action('wp_head', 'aff_styles', 100);
 }
@@ -387,6 +363,6 @@ function symlinks_settings_link( $links ) {
     array_push( $links, $settings_link );
     return $links;
 }
-
+  
 $plugin = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin", 'symlinks_settings_link' );
