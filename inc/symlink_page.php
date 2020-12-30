@@ -34,25 +34,28 @@
           <td><strong>Post Type</strong></td>
         </tr>
 
-        <?php if ($result && !empty(array_filter($result))) {
+        <?php if (!empty(array_filter($result))) {
 
           foreach($result as $r) {
-            print '<tr class="urls">';
-            print '<td><div><input type="text" name="current_url[]" value="'.$r['url'].'"/></div></td>';
-            print '<td><div><input type="text" name="symlink_url[]" value="'.$r['symlink'].'"/></div></td>';
-            print '<td><div><select name="enabled['.$r['symlink'].']"><option value> -- select an option -- </option>';
 
-            foreach ( $post_types as $post_type ) {
-                if ( $post_type == $r['enabled'] ) {
-                  print '<option selected value="'.$post_type.'">'.$post_type.'</option>';
-                } else {
-                  print '<option value="'.$post_type.'">'.$post_type.'</option>';
-                }
+            if ($r['url'] !='') {
+              print '<tr class="urls">';
+              print '<td><div><input type="text" name="current_url[]" value="'.$r['url'].'"/></div></td>';
+              print '<td><div><input type="text" name="symlink_url[]" value="'.$r['symlink'].'"/></div></td>';
+              print '<td><div><select name="enabled['.$r['symlink'].']"><option value> -- select an option -- </option>';
+
+              foreach ( $post_types as $post_type ) {
+                  if ( $post_type == $r['enabled'] ) {
+                    print '<option selected value="'.$post_type.'">'.$post_type.'</option>';
+                  } else {
+                    print '<option value="'.$post_type.'">'.$post_type.'</option>';
+                  }
+              }
+
+              print '</select>';
+              print' <button class="sym-add-id">+</button><button class="sym-kill-id">-</button></div></td>';
+              print '</tr>';
             }
-
-            print '</select>';
-            print' <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
-            print '</tr>';
           }
 
         } else {
@@ -64,7 +67,7 @@
             print '<option value="'.$post_type.'">'.$post_type.'</option>';
           }
           print '</select>';
-          print' <button class="add-id">+</button><button class="kill-id">-</button></div></td>';
+          print' <button class="sym-add-id">+</button><button class="sym-kill-id">-</button></div></td>';
           print '</tr>';
         }
         ?>
@@ -77,25 +80,24 @@
               $count = $('tr.urls').length;
 
               if($count == 1) {
-                $('.kill-id').attr('disabled', 'disabled').css('opacity', '0.375');
+                $('.sym-kill-id').attr('disabled', 'disabled').css('opacity', '0.375');
               } else {
-                $('.kill-id').removeAttr('disabled', 'disabled').css('opacity', '1');
+                $('.sym-kill-id').removeAttr('disabled', 'disabled').css('opacity', '1');
               }
             }
 
             function clone(){
-              $('.add-id').click(function(){
+              $('.sym-add-id').click(function(){
                 $parent = $(this).parents('tr');
 
-                $parent.clone(true).addClass('cloned').find("input:text").val("").end().insertAfter($parent);
+                $parent.clone(true).addClass('cloned').find("input:text").val("").end().find("select").val("").change().end().insertAfter($parent);
                 tr_count();
-
                 return false;
               });
             }
 
             function kill(){
-              $('.kill-id').click(function(){
+              $('.sym-kill-id').click(function(){
                 $parent = $(this).parents('tr');
 
                 $parent.find("input:text").val("");
