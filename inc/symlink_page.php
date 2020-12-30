@@ -90,7 +90,7 @@
               $('.sym-add-id').click(function(){
                 $parent = $(this).parents('tr');
 
-                $parent.clone(true).addClass('cloned').find("input:text").val("").end().find("select").val("").change().end().insertAfter($parent);
+                $parent.clone(true).addClass('cloned').find("input:text").val("").end().insertAfter($parent);
                 tr_count();
                 return false;
               });
