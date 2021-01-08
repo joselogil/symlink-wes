@@ -91,6 +91,7 @@
                 $parent = $(this).parents('tr');
 
                 $parent.clone(true).addClass('cloned').find("input:text").val("").end().insertAfter($parent);
+                //$parent.next().find('select').val('').change();
                 tr_count();
                 return false;
               });
@@ -111,7 +112,6 @@
               $("input[name^='symlink']").on('keyup change', function (){
                 $val = $(this).val();
                 $parent = $(this).parents('tr');
-
                 $parent.find('select').attr('name', 'enabled['+$val+']');
               });
             }

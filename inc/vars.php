@@ -9,11 +9,13 @@ $result = array();
 
 if ($urls) {
   foreach ($urls as $id => $url) {
-    $result[$id] = array(
-      'url'  => $urls[$id],
-      'symlink' => $symlink_urls[$id],
-      'enabled' => $enabled[$symlink_urls[$id]],
-    );
+    if($urls[$id] !='') {
+      $result[$id] = array(
+        'url'  => $urls[$id],
+        'symlink' => $symlink_urls[$id],
+        'enabled' => $enabled[$symlink_urls[$id]],
+      );
+    }
   }
 }
 ?>
