@@ -20,21 +20,33 @@ function af_helpers() {
     $js = '
     document.addEventListener("DOMContentLoaded", function(){
 
-     var af_links = document.querySelectorAll(".affiliate-page .af-link");
+      var af_links = document.querySelectorAll(".affiliate-page .af-link");
+      var af_path = window.location.href;
 
-     if (af_links) {
-       for (var i = 0; i < af_links.length; i++) {
+      if (af_links) {
 
-         href = af_links[i].getAttribute("href");
+        for (var i = 0; i < af_links.length; i++) {
 
-         if (href.endsWith("/")) {
-           href = href.slice(0, -1);
-         }
+          href = af_links[i].getAttribute("href");
 
-         href = href + "-af/";
-         af_links[i].setAttribute("href", href);
-       }
+          if (href.endsWith("/")) {
+            href = href.slice(0, -1);
+          }
 
+          if (af_path.endsWith("af/")) {
+            href = href + "-af/";
+          } else if (af_path.endsWith("af")) {
+            href = href + "-af";
+          } else if (af_path.endsWith("aff/")) {
+            href = href + "-aff/";
+          } else if (af_path.endsWith("aff")) {
+            href = href + "-aff";
+          }
+
+          af_links[i].setAttribute("href", href);
+
+        }
+        
       }
 
     });

@@ -2,7 +2,7 @@
 
 $url = strtok($_SERVER['REQUEST_URI'], '?');
 
-if(substr($url , -4)=='-af/' || substr($url , -5)=='-aff/') {
+if(substr($url , -4) =='-af/' || substr($url , -5) =='-aff/' || substr($url , -3) =='-af' || substr($url , -4) =='-aff') {
 
     function af_class($classes) {
         $classes[] = 'affiliate-page';
