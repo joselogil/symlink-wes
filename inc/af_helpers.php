@@ -1,6 +1,4 @@
 <?php
-
-
 function af_helpers() {
 
     $styles = '
@@ -59,5 +57,14 @@ function af_helpers() {
 }
 
 add_action('wp_head', 'af_helpers', 100);
+
+function af_trailing_slash () {
+  global $wp_rewrite;
+  $wp_rewrite->set_permalink_structure( '/resources/%field_format_type%/%postname%' );
+}
+
+if ($slash) {
+  add_action( 'init', 'af_trailing_slash', 11 );
+}
 
 ?>

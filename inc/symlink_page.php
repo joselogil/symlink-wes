@@ -25,6 +25,19 @@
             </label>
           </td>
         </tr>
+
+        <tr>
+          <th colspan="3" style="background:#23282d;padding:10px;color:#fff"><strong>Remove <em>trailing slash</em> from url</strong></th>
+        </tr>
+
+        <tr>
+          <td colspan="3">
+            <label>
+              <input type="checkbox" name="trailing_slash" value="1" <?php if($slash):echo 'checked';endif;?>>Yes
+            </label>
+          </td>
+        </tr>
+        
         <tr>
           <th colspan="3" style="background:#23282d;padding:10px;color:#fff"><strong>Symlinks Builder</strong></th>
         </tr>

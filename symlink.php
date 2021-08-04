@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks Builder - WES
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 1.2.3
+Version: 1.3
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
@@ -39,6 +39,7 @@ function update_symlinks() {
   register_setting( 'symlinks-settings', 'current_url' );
   register_setting( 'symlinks-settings', 'symlink_url' );
   register_setting( 'symlinks-settings', 'enabled' );
+  register_setting( 'symlinks-settings', 'trailing_slash' );
 }
 
 // Create WordPress plugin page
