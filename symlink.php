@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks Builder - WES
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 1.2.3
+Version: 1.2.4
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
