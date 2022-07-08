@@ -82,9 +82,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
+
+
+/**
+ * External dependencies
+ */
 
 
 /**
@@ -107,20 +114,25 @@ const options = [{
   label: "My Cool Post"
 }, {
   value: 2,
-  label: "Second Test Post"
+  label: "Sample Page"
 }, {
   value: 3,
   label: "Last One"
 }, {
   value: 1286,
   label: "Real Post"
+}, {
+  value: 1171,
+  label: "Example Post"
 }];
 function PostSelectControl(_ref) {
-  let { ...extraProps
+  let {
+    className = false,
+    ...extraProps
   } = _ref;
   const baseClass = "c-disclosure";
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
-    className: classnames({
+    className: classnames__WEBPACK_IMPORTED_MODULE_4___default()({
       [`${baseClass}`]: true,
       [`${className}`]: className
     })
@@ -169,7 +181,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * custom hook to program posts
+ * custom hook to get parent post
  *
  * @param {number} id
  */
@@ -178,11 +190,17 @@ const usePost = id => {
   const {
     result = null
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useSelect)(select => ({
-    result: Number.isInteger(id) ? select("core").getEntityRecord("postType", "course", id) : false
+    result: Number.isInteger(id) ? select("get-record-by").id(id) : // ? select("core").getEntityRecord("postType", "course", id)
+    false
   }));
   return result;
-}; // HOW DO I GET THE POST TYPE FOR getEntityRecord?
+}; // TODO
 
+
+function buildPreviewUrl(symlink) {
+  let parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  return "";
+}
 
 function SymlinkEditor(_ref) {
   let {
@@ -192,7 +210,7 @@ function SymlinkEditor(_ref) {
     ...extraProps
   } = _ref;
   const parent = ["parent", "parent-slug"].includes(symlink.type) ? usePost(symlink.parent) : false;
-  console.log(symlink);
+  console.log(parent === null || parent === void 0 ? void 0 : parent.link);
 
   const symlinkUpdate = (key, val) => {
     onChange === null || onChange === void 0 ? void 0 : onChange({ ...symlink,
@@ -204,12 +222,15 @@ function SymlinkEditor(_ref) {
     slugPlain: 'Full custom slug appended to the root site URL. Can include "/" to act as a child page',
     slugParent: 'Appended to main parent URL. Can include "/" to act as a nested child page',
     parent: "Provides base URL"
-  };
+  }; // TODO add spinner ad dynamic link preview to disclosure text. MAY have to rework how that component functions
+
+  const text = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("p", null, "Hello ", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("strong", null, "World"), ".");
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_disclosure__WEBPACK_IMPORTED_MODULE_4__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
     closeIcon: "no",
     openIcon: "edit",
     icon: symlink.type.includes("parent") ? "rest-api" : "admin-links",
-    text: symlink !== null && symlink !== void 0 && symlink.slug ? symlink.slug : "?"
+    text: text // text={symlink?.slug ? symlink.slug : "?"}
+
   }, extraProps), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
     label: "Type",
     value: symlink.type,
@@ -243,6 +264,85 @@ function SymlinkEditor(_ref) {
     help: "parent-slug" === symlink.type ? helpTexts.slugParent : helpTexts.slugPlain
   }) : null);
 }
+
+/***/ }),
+
+/***/ "./src/store-find-post-by.js":
+/*!***********************************!*\
+  !*** ./src/store-find-post-by.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_1__);
+
+ // actions
+
+const actions = {
+  receiveRecord(record) {
+    return {
+      type: "RECEIVE_RECORD",
+      record
+    };
+  }
+
+}; // set initial state
+
+const DEFAULT_STATE = {
+  records: []
+};
+const store = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.createReduxStore)("get-record-by", {
+  reducer() {
+    let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_STATE;
+    let action = arguments.length > 1 ? arguments[1] : undefined;
+
+    switch (action.type) {
+      case "RECEIVE_RECORD":
+        if (-1 === state.records.findIndex(item => item.id === action.record.id)) {
+          return { ...state,
+            records: [...state.records, action.record]
+          };
+        } else {
+          return state;
+        }
+
+    }
+
+    return state;
+  },
+
+  actions,
+  selectors: {
+    id(state, id) {
+      const {
+        records
+      } = state;
+      console.log("selector", id);
+      return state.records.find(record => record.id === id);
+    }
+
+  },
+  resolvers: {
+    id: id => async _ref => {
+      let {
+        dispatch
+      } = _ref;
+      const record = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0___default()({
+        path: `/wiley/v1/find-post-by/id/${id}/`
+      });
+      console.log("resolver", record);
+
+      if (record !== null && record !== void 0 && record.id) {
+        dispatch.receiveRecord(record);
+      }
+    }
+  }
+});
+(0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.register)(store);
 
 /***/ }),
 
@@ -310,6 +410,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	} else {}
 }());
 
+
+/***/ }),
+
+/***/ "@wordpress/api-fetch":
+/*!**********************************!*\
+  !*** external ["wp","apiFetch"] ***!
+  \**********************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = window["wp"]["apiFetch"];
 
 /***/ }),
 
@@ -476,11 +587,13 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/edit-post */ "@wordpress/edit-post");
-/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/plugins */ "@wordpress/plugins");
-/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_symlink_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/symlink-editor */ "./src/components/symlink-editor.js");
+/* harmony import */ var _store_find_post_by__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store-find-post-by */ "./src/store-find-post-by.js");
+/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/edit-post */ "@wordpress/edit-post");
+/* harmony import */ var _wordpress_edit_post__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/plugins */ "@wordpress/plugins");
+/* harmony import */ var _wordpress_plugins__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_symlink_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/symlink-editor */ "./src/components/symlink-editor.js");
+
 
 
 
@@ -496,18 +609,18 @@ const PluginDocumentSettingPanelSymlinks = () => {
   }, {
     // second symlink is set to "parent", adding a prefix of the slug of post id of 412 to the real slug
     type: "parent",
-    parent: 1286
+    parent: 2
   }, {
     // third symlink is set to "parent-slug" using a custom slug AND adding a parent prefix
     type: "parent-slug",
     slug: "mgmt-301-yo",
     parent: 1286
   }]);
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__.PluginDocumentSettingPanel, {
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_2__.PluginDocumentSettingPanel, {
     name: "symlinks",
     title: "Symlinks",
     className: "symlinks"
-  }, symlinks.map((item, i) => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_symlink_editor__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, symlinks.map((item, i) => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_symlink_editor__WEBPACK_IMPORTED_MODULE_4__["default"], {
     symlink: item,
     onChange: newItem => {
       const newSymlinks = [...symlinks];
@@ -517,7 +630,7 @@ const PluginDocumentSettingPanelSymlinks = () => {
   })));
 };
 
-(0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_2__.registerPlugin)("plugin-document-setting-panel-demo", {
+(0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_3__.registerPlugin)("plugin-document-setting-panel-demo", {
   render: PluginDocumentSettingPanelSymlinks
 });
 })();

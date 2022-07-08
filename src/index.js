@@ -1,3 +1,4 @@
+import "./store-find-post-by";
 import { useState } from "@wordpress/element";
 import { PluginDocumentSettingPanel } from "@wordpress/edit-post";
 import { registerPlugin } from "@wordpress/plugins";
@@ -14,7 +15,7 @@ const PluginDocumentSettingPanelSymlinks = () => {
 		{
 			// second symlink is set to "parent", adding a prefix of the slug of post id of 412 to the real slug
 			type: "parent",
-			parent: 1286,
+			parent: 2,
 		},
 		{
 			// third symlink is set to "parent-slug" using a custom slug AND adding a parent prefix

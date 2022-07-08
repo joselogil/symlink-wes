@@ -9,6 +9,11 @@ import { useSelect } from "@wordpress/data";
 import { useState } from "@wordpress/element";
 
 /**
+ * External dependencies
+ */
+import classnames from "classnames";
+
+/**
  * custom hook to program posts
  *
  * @param {array} posts
@@ -24,12 +29,16 @@ const usePosts = (id) => {
 
 const options = [
 	{ value: 1, label: "My Cool Post" },
-	{ value: 2, label: "Second Test Post" },
+	{ value: 2, label: "Sample Page" },
 	{ value: 3, label: "Last One" },
 	{ value: 1286, label: "Real Post" },
+	{ value: 1171, label: "Example Post" },
 ];
 
-export default function PostSelectControl({ ...extraProps }) {
+export default function PostSelectControl({
+	className = false,
+	...extraProps
+}) {
 	const baseClass = "c-disclosure";
 	return (
 		<div

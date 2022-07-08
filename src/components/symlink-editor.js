@@ -18,20 +18,24 @@ import PostSelectControl from "./post-select-control";
 import classnames from "classnames";
 
 /**
- * custom hook to program posts
+ * custom hook to get parent post
  *
  * @param {number} id
  */
 const usePost = (id) => {
 	const { result = null } = useSelect((select) => ({
 		result: Number.isInteger(id)
-			? select("core").getEntityRecord("postType", "course", id)
-			: false,
+			? select("get-record-by").id(id)
+			: // ? select("core").getEntityRecord("postType", "course", id)
+			  false,
 	}));
 	return result;
 };
 
-// HOW DO I GET THE POST TYPE FOR getEntityRecord?
+// TODO
+function buildPreviewUrl(symlink, parent = false) {
+	return "";
+}
 
 export default function SymlinkEditor({
 	symlink,
@@ -43,7 +47,7 @@ export default function SymlinkEditor({
 		? usePost(symlink.parent)
 		: false;
 
-	console.log(symlink);
+	console.log(parent?.link);
 
 	const symlinkUpdate = (key, val) => {
 		onChange?.({ ...symlink, [`${key}`]: val });
@@ -57,12 +61,20 @@ export default function SymlinkEditor({
 		parent: "Provides base URL",
 	};
 
+	// TODO add spinner ad dynamic link preview to disclosure text. MAY have to rework how that component functions
+	const text = (
+		<p>
+			Hello <strong>World</strong>.
+		</p>
+	);
+
 	return (
 		<Disclosure
 			closeIcon="no"
 			openIcon="edit"
 			icon={symlink.type.includes("parent") ? "rest-api" : "admin-links"}
-			text={symlink?.slug ? symlink.slug : "?"}
+			text={text}
+			// text={symlink?.slug ? symlink.slug : "?"}
 			{...extraProps}
 		>
 			<SelectControl
