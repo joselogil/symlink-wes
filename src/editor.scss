@@ -1,0 +1,26 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.components-input-table {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	align-items: center;
+	gap: 0.25rem;
+
+	> * {
+		margin: 0;
+	}
+
+	.components-base-control {
+		&,
+		&__field {
+			display: contents;
+		}
+
+		&__label {
+			margin: 0;
+		}
+	}
+}
