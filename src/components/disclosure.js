@@ -1,5 +1,6 @@
-import { Dashicon } from "@wordpress/components";
+import { Dashicon, Tooltip } from "@wordpress/components";
 import { useState } from "@wordpress/element";
+import { useInstanceId } from "@wordpress/compose";
 
 /**
  * External dependencies
@@ -10,15 +11,33 @@ export default function Disclosure({
 	children,
 	className = false,
 	icon = false,
+	iconTooltip = null,
 	text = "Disclosure",
 	openIcon = "plus",
 	closeIcon = "minus",
+	openLabel = "Open",
+	closeLabel = "Close",
 	initialOpen = false,
 	...extraProps
 }) {
 	const baseClass = "c-disclosure";
 
+	const instanceId = useInstanceId(Disclosure, "symlink-disclosure");
+
 	const [isExpanded, setIsExpanded] = useState(initialOpen);
+
+	let iconEl = icon ? (
+		<Dashicon
+			className={`${baseClass}__icon`}
+			icon={icon}
+			aria-label={iconTooltip}
+		/>
+	) : null;
+	if (icon && iconTooltip) {
+		iconEl = <Tooltip text={iconTooltip}>{iconEl}</Tooltip>;
+	}
+
+	const triggerText = isExpanded ? closeLabel : openLabel;
 
 	return (
 		<div
@@ -29,13 +48,25 @@ export default function Disclosure({
 			{...extraProps}
 		>
 			<div className={`${baseClass}__header`}>
-				{icon ? <Dashicon icon={icon} /> : null}
+				{iconEl}
 				<span className={`${baseClass}__text`}>{text}</span>
-				<button onClick={() => setIsExpanded(!isExpanded)}>
-					<Dashicon icon={isExpanded ? closeIcon : openIcon} />
-				</button>
+				<Tooltip text={triggerText}>
+					<button
+						aria-expanded={isExpanded}
+						className={`${baseClass}__trigger`}
+						onClick={() => setIsExpanded(!isExpanded)}
+						aria-controls={`${instanceId}-panel`}
+						aria-label={triggerText}
+					>
+						<Dashicon icon={isExpanded ? closeIcon : openIcon} />
+					</button>
+				</Tooltip>
 			</div>
-			<div className={`${baseClass}__panel`} hidden={!isExpanded}>
+			<div
+				className={`${baseClass}__panel`}
+				id={`${instanceId}-panel`}
+				hidden={!isExpanded}
+			>
 				{children}
 			</div>
 		</div>

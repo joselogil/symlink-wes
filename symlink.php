@@ -6,7 +6,7 @@ Version: 1.2.4
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
-namespace Wiley\Symlink;
+namespace Wiley\Symlinks;
 
 defined( 'SYMLINK_WES_DIR' ) or define( 'SYMLINK_WES_DIR', plugin_dir_path( __FILE__ ) );
 defined( 'SYMLINK_WES_URL' ) or define( 'SYMLINK_WES_URL', plugin_dir_url( __FILE__ ) );
@@ -24,11 +24,13 @@ function sidebar_plugin_register() {
 		$deps,
 		'1.2.4'
 	);
+	wp_register_style( 'symlink-editor-sidebar', SYMLINK_WES_URL . '/build/index.css' );
 }
 add_action( 'init', __NAMESPACE__ . '\\sidebar_plugin_register' );
 
 function sidebar_plugin_script_enqueue() {
 	wp_enqueue_script( 'symlink-editor-sidebar' );
+	wp_enqueue_style( 'symlink-editor-sidebar' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\sidebar_plugin_script_enqueue' );
 

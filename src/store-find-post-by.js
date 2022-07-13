@@ -40,8 +40,7 @@ const store = createReduxStore("get-record-by", {
 	selectors: {
 		id(state, id) {
 			const { records } = state;
-			console.log("selector", id);
-			return state.records.find((record) => record.id === id);
+			return id ? state.records.find((record) => record.id === id) : false;
 		},
 	},
 
@@ -49,10 +48,13 @@ const store = createReduxStore("get-record-by", {
 		id:
 			(id) =>
 			async ({ dispatch }) => {
+				if (!id) {
+					return false;
+				}
+
 				const record = await apiFetch({
 					path: `/wiley/v1/find-post-by/id/${id}/`,
 				});
-				console.log("resolver", record);
 				if (record?.id) {
 					dispatch.receiveRecord(record);
 				}

@@ -1,10 +1,26 @@
-import "./store-find-post-by";
+/**
+ * WordPress dependencies
+ */
+import { Button } from "@wordpress/components";
 import { useState } from "@wordpress/element";
 import { PluginDocumentSettingPanel } from "@wordpress/edit-post";
 import { registerPlugin } from "@wordpress/plugins";
 import SymlinkEditor from "./components/symlink-editor";
+import { useSelect } from "@wordpress/data";
+
+/**
+ * Internal dependencies
+ */
+import "./store-find-post-by";
+import "./editor.scss";
 
 const PluginDocumentSettingPanelSymlinks = () => {
+	const baseClass = "c-symlinks-sidebar";
+
+	const currentPost = useSelect((select) =>
+		select("core/editor").getCurrentPost()
+	);
+
 	// load from post meta, external table, something
 	const [symlinks, setSymlinks] = useState([
 		{
@@ -23,24 +39,56 @@ const PluginDocumentSettingPanelSymlinks = () => {
 			slug: "mgmt-301-yo",
 			parent: 1286,
 		},
+		{
+			type: "parent-slug",
+		},
 	]);
+
+	const panelTitle = `Symlinks${
+		symlinks.length > 0 ? ` (${symlinks.length})` : ""
+	}`;
 
 	return (
 		<PluginDocumentSettingPanel
 			name="symlinks"
-			title="Symlinks"
-			className="symlinks"
+			title={panelTitle}
+			className={baseClass}
 		>
-			{symlinks.map((item, i) => (
-				<SymlinkEditor
-					symlink={item}
-					onChange={(newItem) => {
-						const newSymlinks = [...symlinks];
-						newSymlinks[i] = newItem;
-						setSymlinks(newSymlinks);
+			<div className={`${baseClass}__list`}>
+				{symlinks.map((item, i) => (
+					<SymlinkEditor
+						symlink={item}
+						onChange={(newItem) => {
+							const newSymlinks = [...symlinks];
+
+							// new/updated items will be an object of symlink data
+							// deleted items will be `false`
+							if (typeof newItem === "object") {
+								newSymlinks[i] = newItem;
+							} else {
+								newSymlinks.splice(i, 1);
+							}
+							setSymlinks(newSymlinks);
+						}}
+					/>
+				))}
+				<Button
+					variant="secondary"
+					icon="plus"
+					className={`${baseClass}__add`}
+					onClick={() => {
+						setSymlinks([
+							...symlinks,
+							{
+								type: "slug",
+								slug: currentPost?.slug ? `${currentPost.slug}-alt` : "",
+							},
+						]);
 					}}
-				/>
-			))}
+				>
+					Add Symlink
+				</Button>
+			</div>
 		</PluginDocumentSettingPanel>
 	);
 };

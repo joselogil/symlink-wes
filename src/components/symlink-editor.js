@@ -1,8 +1,15 @@
+/**
+ * WordPress dependencies
+ */
 import {
+	Button,
+	Dashicon,
 	SelectControl,
 	FormToggle,
 	TextControl,
 	Tooltip,
+	PanelRow,
+	Spinner,
 } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
 
@@ -24,17 +31,79 @@ import classnames from "classnames";
  */
 const usePost = (id) => {
 	const { result = null } = useSelect((select) => ({
-		result: Number.isInteger(id)
-			? select("get-record-by").id(id)
-			: // ? select("core").getEntityRecord("postType", "course", id)
-			  false,
+		result: select("get-record-by").id(id && Number.isInteger(id) ? id : false),
 	}));
 	return result;
 };
 
-// TODO
-function buildPreviewUrl(symlink, parent = false) {
-	return "";
+function getWarnings(symlink) {
+	const warnings = [];
+
+	// bail early if we need parent but none is selected
+	if (["parent", "parent-slug"].includes(symlink?.type) && !symlink?.parent) {
+		warnings.push("No Parent Selected");
+	}
+
+	// bail early if we need slug but none is entered
+	if (["slug", "parent-slug"].includes(symlink?.type) && !symlink?.slug) {
+		warnings.push("No Slug Entered");
+	}
+
+	return warnings;
+}
+
+function buildPreviewUrl(symlink, post, parent = false, warnings = []) {
+	// bail early and instead show loader if
+	// we are waiting on parent data to load
+	if (["parent", "parent-slug"].includes(symlink?.type) && null === parent) {
+		return <Spinner />;
+	}
+
+	// bail early if there are warnings, which mean we
+	// are missing critical info to build the url
+	if (warnings.length > 0) {
+		return (
+			<span className="c-warning-label">
+				<Dashicon className="c-symlink-editor__warning-icon" icon="warning" />{" "}
+				{warnings.length} Warning{warnings.length > 1 ? "s" : ""}
+			</span>
+		);
+	}
+
+	// data setup
+	const parentUrl =
+		parent && parent?.link ? new URL(parent.link).pathname : "{...}";
+
+	const postSlug = post?.slug;
+
+	const includeTrailingSlash =
+		post && post?.link ? post.link.endsWith("/") : true;
+
+	// build the url
+	let url = "";
+
+	switch (symlink?.type) {
+		case "slug":
+			url += `/${symlink?.slug}`;
+			break;
+		case "parent":
+			url += `${parentUrl}/${postSlug}`;
+			break;
+		case "parent-slug":
+			url += `${parentUrl}/${symlink.slug}`;
+			break;
+
+		default:
+			break;
+	}
+
+	url += includeTrailingSlash ? "/" : "";
+
+	return (
+		<a href={url} target="_blank">
+			{url}
+		</a>
+	);
 }
 
 export default function SymlinkEditor({
@@ -43,14 +112,22 @@ export default function SymlinkEditor({
 	className = false,
 	...extraProps
 }) {
-	const parent = ["parent", "parent-slug"].includes(symlink.type)
-		? usePost(symlink.parent)
-		: false;
+	const warnings = getWarnings(symlink);
 
-	console.log(parent?.link);
+	const baseClass = "c-symlink-editor";
+
+	const parent = usePost(symlink?.parent);
+
+	const currentPost = useSelect((select) =>
+		select("core/editor").getCurrentPost()
+	);
 
 	const symlinkUpdate = (key, val) => {
 		onChange?.({ ...symlink, [`${key}`]: val });
+	};
+
+	const symlinkDelete = () => {
+		onChange?.(false);
 	};
 
 	const helpTexts = {
@@ -61,24 +138,47 @@ export default function SymlinkEditor({
 		parent: "Provides base URL",
 	};
 
-	// TODO add spinner ad dynamic link preview to disclosure text. MAY have to rework how that component functions
-	const text = (
-		<p>
-			Hello <strong>World</strong>.
-		</p>
-	);
+	const typeTooltips = {
+		slug: "Custom Slug",
+		parent: "Parent Post",
+		["parent-slug"]: "Parent Post + Custom Slug",
+	};
+
+	// TODO add spinner and dynamic link preview to disclosure text. MAY have to rework how that component functions
+	const text = buildPreviewUrl(symlink, currentPost, parent, warnings);
 
 	return (
 		<Disclosure
+			className={classnames({
+				[`${baseClass}`]: true,
+				[`${className}`]: className,
+			})}
 			closeIcon="no"
 			openIcon="edit"
+			openLabel="Edit"
 			icon={symlink.type.includes("parent") ? "rest-api" : "admin-links"}
+			iconTooltip={typeTooltips[symlink.type]}
 			text={text}
 			// text={symlink?.slug ? symlink.slug : "?"}
 			{...extraProps}
 		>
+			{warnings.length > 0 ? (
+				<ul className="c-symlink-editor__warnings">
+					{warnings.map((text, i) => (
+						<li key={i}>
+							<Dashicon
+								className="c-symlink-editor__warning-icon"
+								icon="warning"
+							/>{" "}
+							{text}
+						</li>
+					))}
+				</ul>
+			) : null}
 			<SelectControl
+				className={`${baseClass}__type`}
 				label="Type"
+				labelPosition="side"
 				value={symlink.type}
 				onChange={(val) => {
 					symlinkUpdate("type", val);
@@ -91,8 +191,10 @@ export default function SymlinkEditor({
 			/>
 			{["parent", "parent-slug"].includes(symlink.type) ? (
 				<PostSelectControl
-					label="Parent"
+					label="Parent Post"
 					value={symlink?.parent}
+					postTypeSelect={true}
+					postType={parent?.type}
 					onChange={(val) => {
 						// console.log(val);
 						symlinkUpdate("parent", val);
@@ -114,6 +216,14 @@ export default function SymlinkEditor({
 					}
 				/>
 			) : null}
+			<Button
+				isDestructive
+				isSmall
+				className={`${baseClass}__delete`}
+				onClick={symlinkDelete}
+			>
+				Delete
+			</Button>
 		</Disclosure>
 	);
 }

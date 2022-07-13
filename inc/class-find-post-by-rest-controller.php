@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiley\Symlink;
+namespace Wiley\Symlinks;
 
 use WP_Query;
 use WP_REST_Controller;
