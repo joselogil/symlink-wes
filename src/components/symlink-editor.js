@@ -87,10 +87,10 @@ function buildPreviewUrl(symlink, post, parent = false, warnings = []) {
 			url += `/${symlink?.slug}`;
 			break;
 		case "parent":
-			url += `${parentUrl}/${postSlug}`;
+			url += `${parentUrl}${includeTrailingSlash ? "" : "/"}${postSlug}`;
 			break;
 		case "parent-slug":
-			url += `${parentUrl}/${symlink.slug}`;
+			url += `${parentUrl}${includeTrailingSlash ? "" : "/"}${symlink.slug}`;
 			break;
 
 		default:

@@ -6,7 +6,7 @@ import { useState } from "@wordpress/element";
 import { PluginDocumentSettingPanel } from "@wordpress/edit-post";
 import { registerPlugin } from "@wordpress/plugins";
 import SymlinkEditor from "./components/symlink-editor";
-import { useSelect } from "@wordpress/data";
+import { useSelect, useDispatch } from "@wordpress/data";
 
 /**
  * Internal dependencies
@@ -21,8 +21,14 @@ const PluginDocumentSettingPanelSymlinks = () => {
 		select("core/editor").getCurrentPost()
 	);
 
+	const symlinks = useSelect(function (select) {
+		return select("core/editor").getEditedPostAttribute("meta")["symlinks"];
+	}, []);
+
+	console.log(symlinks);
+
 	// load from post meta, external table, something
-	const [symlinks, setSymlinks] = useState([
+	/*const [symlinks, setSymlinks] = useState([
 		{
 			// first symlink is a simple alternate URL at the same place
 			type: "slug",
@@ -42,11 +48,13 @@ const PluginDocumentSettingPanelSymlinks = () => {
 		{
 			type: "parent-slug",
 		},
-	]);
+	]);*/
 
 	const panelTitle = `Symlinks${
 		symlinks.length > 0 ? ` (${symlinks.length})` : ""
 	}`;
+
+	const { editPost } = useDispatch("core/editor");
 
 	return (
 		<PluginDocumentSettingPanel
@@ -68,7 +76,12 @@ const PluginDocumentSettingPanelSymlinks = () => {
 							} else {
 								newSymlinks.splice(i, 1);
 							}
-							setSymlinks(newSymlinks);
+
+							editPost({
+								meta: { symlinks: newSymlinks },
+							});
+
+							// setSymlinks(newSymlinks);
 						}}
 					/>
 				))}
@@ -77,13 +90,19 @@ const PluginDocumentSettingPanelSymlinks = () => {
 					icon="plus"
 					className={`${baseClass}__add`}
 					onClick={() => {
-						setSymlinks([
+						const newSymlinks = [
 							...symlinks,
 							{
 								type: "slug",
 								slug: currentPost?.slug ? `${currentPost.slug}-alt` : "",
 							},
-						]);
+						];
+
+						editPost({
+							meta: { symlinks: newSymlinks },
+						});
+
+						// setSymlinks(newSymlinks);
 					}}
 				>
 					Add Symlink
