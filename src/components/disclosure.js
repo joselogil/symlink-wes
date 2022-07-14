@@ -20,7 +20,7 @@ export default function Disclosure({
 	initialOpen = false,
 	...extraProps
 }) {
-	const baseClass = "c-disclosure";
+	const baseClass = "sym-c-disclosure";
 
 	const instanceId = useInstanceId(Disclosure, "symlink-disclosure");
 

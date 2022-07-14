@@ -63,8 +63,8 @@ function buildPreviewUrl(symlink, post, parent = false, warnings = []) {
 	// are missing critical info to build the url
 	if (warnings.length > 0) {
 		return (
-			<span className="c-warning-label">
-				<Dashicon className="c-symlink-editor__warning-icon" icon="warning" />{" "}
+			<span className="sym-c-warning-label">
+				<Dashicon className="sym-c-inline-icon" icon="warning" />{" "}
 				{warnings.length} Warning{warnings.length > 1 ? "s" : ""}
 			</span>
 		);
@@ -114,7 +114,7 @@ export default function SymlinkEditor({
 }) {
 	const warnings = getWarnings(symlink);
 
-	const baseClass = "c-symlink-editor";
+	const baseClass = "sym-c-symlink-editor";
 
 	const parent = usePost(symlink?.parent);
 
@@ -163,14 +163,10 @@ export default function SymlinkEditor({
 			{...extraProps}
 		>
 			{warnings.length > 0 ? (
-				<ul className="c-symlink-editor__warnings">
+				<ul className={`${baseClass}__warnings`}>
 					{warnings.map((text, i) => (
 						<li key={i}>
-							<Dashicon
-								className="c-symlink-editor__warning-icon"
-								icon="warning"
-							/>{" "}
-							{text}
+							<Dashicon className="sym-c-inline-icon" icon="warning" /> {text}
 						</li>
 					))}
 				</ul>

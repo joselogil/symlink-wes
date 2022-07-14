@@ -37,7 +37,7 @@ export default function PostSelectControl({
 	className = false,
 	...extraProps
 }) {
-	const baseClass = "c-post-select-control";
+	const baseClass = "sym-c-post-select-control";
 
 	const [currentPostType, setCurrentPostType] = useState(postType ?? "post");
 
@@ -52,7 +52,14 @@ export default function PostSelectControl({
 
 	const excludedPostTypes = wp.hooks.applyFilters(
 		"symlinks.postSelectControlExcludedPostTypes",
-		["attachment", "wp_block"]
+		[
+			"attachment",
+			"wp_block",
+			"nav_menu_item",
+			"wp_template",
+			"wp_template_part",
+			"wp_navigation",
+		]
 	);
 
 	const postTypes = useSelect((select) => {
