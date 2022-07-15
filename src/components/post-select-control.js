@@ -35,6 +35,7 @@ export default function PostSelectControl({
 	postType = null,
 	label = "Selected Post",
 	className = false,
+	help = false,
 	...extraProps
 }) {
 	const baseClass = "sym-c-post-select-control";
@@ -114,6 +115,7 @@ export default function PostSelectControl({
 				label={label}
 				onChange={onChange}
 				disabled={!options}
+				help={help}
 			/>
 		</div>
 	);

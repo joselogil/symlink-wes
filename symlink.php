@@ -10,6 +10,12 @@ namespace Wiley\Symlinks;
 
 defined( 'WILEY_SYMLINKS_DIR' ) or define( 'WILEY_SYMLINKS_DIR', plugin_dir_path( __FILE__ ) );
 defined( 'WILEY_SYMLINKS_URL' ) or define( 'WILEY_SYMLINKS_URL', plugin_dir_url( __FILE__ ) );
+defined( 'WILEY_SYMLINKS_FILE' ) or define( 'WILEY_SYMLINKS_FILE', plugin_basename( __FILE__ ) );
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // WP admin stuff to manage the URL data
 include_once( WILEY_SYMLINKS_DIR . 'inc/sidebar.php' );

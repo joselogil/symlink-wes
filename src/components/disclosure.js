@@ -1,6 +1,7 @@
 import { Dashicon, Tooltip } from "@wordpress/components";
 import { useState } from "@wordpress/element";
 import { useInstanceId } from "@wordpress/compose";
+import { Icon, chevronUp, chevronDown } from "@wordpress/icons";
 
 /**
  * External dependencies
@@ -13,8 +14,8 @@ export default function Disclosure({
 	icon = false,
 	iconTooltip = null,
 	text = "Disclosure",
-	openIcon = "plus",
-	closeIcon = "minus",
+	openIcon = chevronDown,
+	closeIcon = chevronUp,
 	openLabel = "Open",
 	closeLabel = "Close",
 	initialOpen = false,
@@ -27,11 +28,9 @@ export default function Disclosure({
 	const [isExpanded, setIsExpanded] = useState(initialOpen);
 
 	let iconEl = icon ? (
-		<Dashicon
-			className={`${baseClass}__icon`}
-			icon={icon}
-			aria-label={iconTooltip}
-		/>
+		<span className={`${baseClass}__icon`} aria-label={iconTooltip}>
+			<Icon icon={icon} />
+		</span>
 	) : null;
 	if (icon && iconTooltip) {
 		iconEl = <Tooltip text={iconTooltip}>{iconEl}</Tooltip>;
@@ -58,7 +57,7 @@ export default function Disclosure({
 						aria-controls={`${instanceId}-panel`}
 						aria-label={triggerText}
 					>
-						<Dashicon icon={isExpanded ? closeIcon : openIcon} />
+						<Icon icon={isExpanded ? closeIcon : openIcon} />
 					</button>
 				</Tooltip>
 			</div>

@@ -16,6 +16,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
+    "@wordpress/icons": "^9.4.0",
     "classnames": "^2.3.1"
   },
   "devDependencies": {

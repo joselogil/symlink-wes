@@ -2,7 +2,7 @@
 
 namespace Wiley\Symlinks;
 
-// does not include leading or trailing slashes
+// Does not include leading or trailing slashes
 function generate_path( $symlink, $id ) {
 
 	$type = $symlink['type'] ? $symlink['type'] : 'slug';
@@ -75,9 +75,7 @@ function register_rewrites() {
 }
 add_action( 'init', __NAMESPACE__ . '\\register_rewrites' );
 
-/**
- * Disable annonying WP canonical redirect
- */
+// Disable annonying WP canonical redirect
 function custom_query_vars( $qvars ) {
 	$qvars[] = 'do_not_redirect';
 
@@ -88,14 +86,5 @@ function custom_query_vars( $qvars ) {
 }
 add_filter( 'query_vars', __NAMESPACE__ . '\\custom_query_vars' );
 
-function disable_redirect( $location ) {
-	$disable_redirect = get_query_var( 'do_not_redirect' );
-
-	if ( ! empty( $disable_redirect ) ) {
-		return false;
-	}
-	return $location;
-}
-add_filter( 'wp_redirect', __NAMESPACE__ . '\\disable_redirect' );
 
 

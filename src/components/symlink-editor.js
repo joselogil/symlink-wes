@@ -12,12 +12,15 @@ import {
 	Spinner,
 } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
+import { Icon, pencil, close, link, warning } from "@wordpress/icons";
 
 /**
  * Internal dependencies
  */
 import Disclosure from "./disclosure";
 import PostSelectControl from "./post-select-control";
+import parentConnection from "../icons/parent-connection";
+import parentLink from "../icons/parent-link";
 
 /**
  * External dependencies
@@ -64,8 +67,8 @@ function buildPreviewUrl(symlink, post, parent = false, warnings = []) {
 	if (warnings.length > 0) {
 		return (
 			<span className="sym-c-warning-label">
-				<Dashicon className="sym-c-inline-icon" icon="warning" />{" "}
-				{warnings.length} Warning{warnings.length > 1 ? "s" : ""}
+				<Icon className="sym-c-inline-icon" icon={warning} /> {warnings.length}{" "}
+				Warning{warnings.length > 1 ? "s" : ""}
 			</span>
 		);
 	}
@@ -135,7 +138,8 @@ export default function SymlinkEditor({
 			'Full custom slug appended to the root site URL. Can include "/" to act as a child page',
 		slugParent:
 			'Appended to main parent URL. Can include "/" to act as a nested child page',
-		parent: "Provides base URL",
+		parentPlain: "URL generated from parent path and current post slug",
+		parentSlug: "Provides base URL",
 	};
 
 	const typeTooltips = {
@@ -144,8 +148,17 @@ export default function SymlinkEditor({
 		["parent-slug"]: "Parent Post + Custom Slug",
 	};
 
-	// TODO add spinner and dynamic link preview to disclosure text. MAY have to rework how that component functions
 	const text = buildPreviewUrl(symlink, currentPost, parent, warnings);
+
+	// set icon
+	let icon =
+		"slug" === symlink?.type
+			? link
+			: "parent" === symlink?.type
+			? parentConnection
+			: "parent-slug" === symlink?.type
+			? parentLink
+			: false;
 
 	return (
 		<Disclosure
@@ -153,20 +166,19 @@ export default function SymlinkEditor({
 				[`${baseClass}`]: true,
 				[`${className}`]: className,
 			})}
-			closeIcon="no"
-			openIcon="edit"
+			closeIcon={close}
+			openIcon={pencil}
 			openLabel="Edit"
-			icon={symlink.type.includes("parent") ? "rest-api" : "admin-links"}
+			icon={icon}
 			iconTooltip={typeTooltips[symlink.type]}
 			text={text}
-			// text={symlink?.slug ? symlink.slug : "?"}
 			{...extraProps}
 		>
 			{warnings.length > 0 ? (
 				<ul className={`${baseClass}__warnings`}>
 					{warnings.map((text, i) => (
 						<li key={i}>
-							<Dashicon className="sym-c-inline-icon" icon="warning" /> {text}
+							<Icon className="sym-c-inline-icon" icon={warning} /> {text}
 						</li>
 					))}
 				</ul>
@@ -192,10 +204,13 @@ export default function SymlinkEditor({
 					postTypeSelect={true}
 					postType={parent?.type}
 					onChange={(val) => {
-						// console.log(val);
 						symlinkUpdate("parent", val);
 					}}
-					help={helpTexts.parent}
+					help={
+						"parent" === symlink?.type
+							? helpTexts.parentPlain
+							: helpTexts.parentSlug
+					}
 				/>
 			) : null}
 			{["slug", "parent-slug"].includes(symlink.type) ? (

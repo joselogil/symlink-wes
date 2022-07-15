@@ -18,6 +18,18 @@ function flag_rewrite_rules_flush_on_symlink_meta_update( $meta_id, $object_id, 
 }
 add_action( 'update_postmeta', __NAMESPACE__ . '\\flag_rewrite_rules_flush_on_symlink_meta_update', 10, 4 );
 
+// We also need to make sure rewrites are flushed on ADD, not just update
+function flag_rewrite_rules_flush_on_symlink_meta_add( $object_id, $meta_key, $meta_value ) {
+
+	// only if symlinks meta has changed
+	if ( 'symlinks' !== $meta_key ) {
+		return;
+	}
+
+	update_option( 'symlinks_flush_rewrite_rules', 1 );
+}
+add_action( 'add_post_meta', __NAMESPACE__ . '\\flag_rewrite_rules_flush_on_symlink_meta_add', 10, 3 );
+
 // We also need to flush rewrites on certain `wp_insert_post_data`,
 // in case the slug of a "parent" post is updated.
 // If the slug is updated, we need to regenerate rewrite rules since
@@ -35,7 +47,6 @@ function flag_rewrite_rules_flush_on_parent_update( $post_data, $postarr, $unsan
 		$prev_slug = get_post_field( 'post_name', $postarr['ID'] );
 		$next_slug = isset( $post_data['post_name'] ) ? $post_data['post_name'] : false;
 
-		trigger_error( 'slug_compare: ' . $prev_slug . ' <> ' . $next_slug );
 		if ( $next_slug && $prev_slug !== $next_slug ) {
 			update_option( 'symlinks_flush_rewrite_rules', 1 );
 		}

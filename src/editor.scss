@@ -22,6 +22,7 @@ html {
 
 	&__icon {
 		cursor: help;
+		display: flex;
 	}
 
 	&__text {
@@ -74,7 +75,7 @@ html {
 		list-style: none;
 		padding-inline-start: none;
 
-		#{$self}__warning-icon {
+		> li > .sym-c-inline-icon:first-child {
 			color: var(--symlinks-admin-color--warning);
 		}
 	}
@@ -103,4 +104,6 @@ html {
 	width: 1em;
 	height: 1em;
 	line-height: inherit;
+	vertical-align: -0.125em;
+	fill: currentColor;
 }
