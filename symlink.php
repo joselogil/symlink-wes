@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 2.0.0
+Version: 1.3.0-dev.sjm-2169.2
 Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
 */
 
@@ -29,9 +29,15 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/rewrites.php' );
 // show other symlinks in admin bar
 include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
 
-/******************************* old */
+/**
+ * Legacy Affiliate Pages
+ */
 
-//add class to body
-include( plugin_dir_path( __FILE__ ) . 'inc/af_class.php' );
-//helper classes for content
-include( plugin_dir_path( __FILE__ ) . 'inc/af_helpers.php' );
+// rewrites + settings page
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-rule.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/remove-program.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/symlinks-page.php' );
+
+// affiliate helpers
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-class.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-helpers.php' );

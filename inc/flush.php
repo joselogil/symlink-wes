@@ -34,7 +34,7 @@ add_action( 'add_post_meta', __NAMESPACE__ . '\\flag_rewrite_rules_flush_on_syml
 // in case the slug of a "parent" post is updated.
 // If the slug is updated, we need to regenerate rewrite rules since
 // some symlinks may be using this slug as a "parent".
-function flag_rewrite_rules_flush_on_parent_update( $post_data, $postarr, $unsanitize_postarr, $update ) {
+function flag_rewrite_rules_flush_on_post_update( $post_data, $postarr, $unsanitize_postarr, $update = true ) {
 	// only run on update, not create
 	if ( $update ) {
 
@@ -54,7 +54,7 @@ function flag_rewrite_rules_flush_on_parent_update( $post_data, $postarr, $unsan
 
 	return $post_data;
 }
-add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\flag_rewrite_rules_flush_on_parent_update', 10, 4 );
+add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\flag_rewrite_rules_flush_on_post_update', 10, 4 );
 
 // flush rewrites only if we have updated a symlink
 function flush_rewrite_rules_on_flag() {
