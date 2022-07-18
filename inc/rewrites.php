@@ -57,8 +57,17 @@ function register_rewrites() {
 
 			$request_str = 'index.php?';
 			// $request_str .= "p={$id}&post_type={$post_type}";
-			// $request_str .= 'page' === $post_type ? "pagename={$post_name}" : "name={$post_name}&post_type={$post_type}";
-			$request_str .= 'page' === $post_type ? "pagename={$post_name}" : "{$post_type}={$post_name}";
+			switch ( $post_type ) {
+				case 'page':
+					$request_str .= "page_id={$id}";
+					break;
+				case 'post':
+					$request_str .= "p={$id}";
+					break;
+				default:
+					$request_str .= "{$post_type}={$post_name}";
+					break;
+			}
 
 			$request_str .= '&do_not_redirect=1';
 
