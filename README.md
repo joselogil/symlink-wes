@@ -61,6 +61,35 @@ addFilter(
 );
 ```
 
+## Plugin Development
+
+This plugin uses webpack through [`@wordpress/scripts`](https://www.npmjs.com/package/@wordpress/scripts) to build assets for the admin. To make changes:
+
+```sh
+npm i
+
+# dev
+npm start
+
+# build for release
+npm run build
+```
+
+### Releases
+
+Raleases are done with semantic versioning through [wp-release](https://github.com/kurtrank/wp-release).
+
+```sh
+# generate zip file for testing
+npm run generate-zip 0.0.0-dev.0
+
+# test real release
+npm run test-release
+
+# create actual real release
+npm run release
+```
+
 ## Symlink Data
 
 Symlink data is stored in a post meta field `symlinks` as an array of objects. Each object contains key data to generate the custom URL, and is structured as follows:
