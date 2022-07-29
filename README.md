@@ -18,8 +18,8 @@ $symlink_parent_id = (int) get_query_var( 'symlink_parent_context' );
 // if we are at a symlink we will have a parent query var, otherwise try to use default post parent
 $parent_id = $symlink_parent_id ? $symlink_parent_id : $post->post_parent;
 
-// we have a real parent or symlink parent
 if ( $parent_id ) {
+	// we have a real parent or symlink parent
 	$parent_link = get_permalink( $parent_id );
 	echo "<a href='{$parent_link}'>Overview Page</a>";
 }
@@ -41,7 +41,7 @@ If you have a plugin that registers a custom post type and do not want that post
 ```js
 const { addFilter } = wp.hooks;
 
-const filterBlocks = (postTypes) => {
+const filterExcludedPostTypes = (postTypes) => {
 	// create new array with all existing excluded types, plus yours
 	return [...postTypes, "my_post_type"];
 };
@@ -49,8 +49,49 @@ const filterBlocks = (postTypes) => {
 addFilter(
 	"symlinks.postSelectControlExcludedPostTypes", // symlinks hook name
 	"my-plugin/filter-post-types", // name for your filter
-	filterBlocks
+	filterExcludedPostTypes
 );
+```
+
+## Symlink Data
+
+Symlink data is stored in a post meta field `symlinks` as an array of objects. Each object contains key data to generate the custom URL, and is structured as follows:
+
+| Property | Type      | Description                                                                                                                       | Required |
+| -------- | --------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `type`   | `string`  | Determines how the URL will be built. Allowed values: `"slug"`, `"parent"`, `"parent-slug"`                                       | Yes      |
+| `slug`   | `string`  | Custom slug that will be included when "slug" or "parent-slug" is used.                                                           | No       |
+| `parent` | `integer` | WordPress Post ID of the post that will act as the "parent", using the path of the parent post for the first part of the symlink. | No       |
+
+### Symlink Types
+
+- `"slug"`: Completely separate URL, can be anything.
+- `"parent"`: Uses the path of the selected parent and the real slug of the current post.
+- `"parent-slug"`: Combination of the above two, using a parent path _and_ a custom slug. The benefit of using this over a plain custom `"slug"` is that if the parent path ever updates this symlink will also update, while still getting the ability to modify the ending slug.
+
+### Example
+
+```js
+// canonical page is `courses/mgmt-301` and the post slug is `mgmt-301`
+
+symlinks = [
+	{
+		// first symlink is a simple alternate URL at the same place
+		type: "slug",
+		slug: "courses/mgmt-301-af",
+	},
+	{
+		// second symlink is set to "parent", adding a prefix of the path of post id 412 to the real slug
+		type: "parent",
+		parent: 412,
+	},
+	{
+		// third symlink is set to "parent-slug" using a custom slug AND adding a parent prefix
+		type: "parent-slug",
+		slug: "mgmt-301-yo",
+		parent: 412,
+	},
+];
 ```
 
 ## Project Structure
