@@ -25,9 +25,17 @@ if ( $parent_id ) {
 }
 ```
 
+### Dynamic Permalinks Based on Context
+
+When on a "parent" post, this plugin will dynamically adjust permalinks for posts that have a symlink for that "parent". To remove this behavior you can use the `symlinks/enable_context_permalinks` filter:
+
+```php
+add_filter( 'symlinks/enable_context_permalinks', '__return_false' );
+```
+
 ### Parent Post Selection
 
-A filter is provided to customize which registered post types are available to choose from for the "parent" of a symlink. The filter passes an array of strings of registered post types, which by default includes:
+A JS filter is provided to customize which registered post types are available to choose from for the "parent" of a symlink. The filter passes an array of strings of registered post types, which by default includes:
 
 - `"attachment"`,
 - `"wp_block"`,

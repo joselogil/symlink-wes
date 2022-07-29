@@ -26,6 +26,9 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/flush.php' );
 // actual URL rewrites
 include_once( WILEY_SYMLINKS_DIR . 'inc/rewrites.php' );
 
+// modify permalinks of "child" when on a "parent"
+include_once( WILEY_SYMLINKS_DIR . 'inc/get-permalink.php' );
+
 // show other symlinks in admin bar
 include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
 
