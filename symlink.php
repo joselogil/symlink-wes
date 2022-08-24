@@ -44,3 +44,12 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/symlinks-page.php' );
 // affiliate helpers
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-class.php' );
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-helpers.php' );
+
+//WP-CLI
+function symlink_is_cli_running() {
+	return defined('WP_CLI') && WP_CLI;
+  }
+  
+if (symlink_is_cli_running()) {
+	include_once( WILEY_SYMLINKS_DIR . 'inc/cli-commands.php' );
+} 
