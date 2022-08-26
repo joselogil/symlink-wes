@@ -22,11 +22,22 @@ const usePosts = (postType) => {
 	const { result = null } = useSelect((select) => ({
 		result: select("core").getEntityRecords("postType", postType, {
 			per_page: -1,
-			_fields: ["id", "title", "type"],
+			_fields: ["id", "title", "type", "parent"],
 		}),
 	}));
 	return result;
 };
+
+const parentTitle = (options, post, title) => {
+	let label = title
+	if (post.parent && post.parent !== 0) {
+		const parentPost =  options.find((parent) => {
+			return parent.id == post.parent
+		})
+		label = '(' + parentTitle(options,parentPost,parentPost.title.rendered) + ') ' + label
+	}
+	return label;
+}
 
 export default function PostSelectControl({
 	value = null,
@@ -81,6 +92,7 @@ export default function PostSelectControl({
 	const options = usePosts(
 		postTypeSelect ? currentPostType : postType ?? "post"
 	);
+	
 
 	return (
 		<div
@@ -105,10 +117,12 @@ export default function PostSelectControl({
 			<ComboboxControl
 				options={
 					Array.isArray(options)
-						? options.map((post) => ({
-								value: post.id,
-								label: post.title.rendered,
-						  }))
+						? options.map((post) => {
+								return {
+									value: post.id,
+									label:parentTitle(options,post,post.title.rendered),
+								}
+						  })
 						: [{ value: "", label: "-" }]
 				}
 				value={value}
