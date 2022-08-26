@@ -3,7 +3,7 @@
 Plugin Name: Symlinks
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
 Version: 1.3.0-dev.sjm-2169.2
-Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
+Author: <a href="mailto:krank@wiley.com">krank@wiley.com</a> 
 */
 
 namespace Wiley\Symlinks;
@@ -16,6 +16,7 @@ defined( 'WILEY_SYMLINKS_FILE' ) or define( 'WILEY_SYMLINKS_FILE', plugin_basena
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
 
 // WP admin stuff to manage the URL data
 include_once( WILEY_SYMLINKS_DIR . 'inc/sidebar.php' );
@@ -39,13 +40,28 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
 // rewrites + settings page
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-rule.php' );
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/remove-program.php' );
-include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/symlinks-page.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/admin-page.php' );
 
 // affiliate helpers
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-class.php' );
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-helpers.php' );
 
-//WP-CLI
+// backend CSS 
+function symlinks_backend( $hook_suffix ) {
+
+	if ( $hook_suffix == 'settings_page_symlinks-wes' ) {
+
+		wp_enqueue_style(
+			'simlinks-css',
+			WILEY_SYMLINKS_DIR . 'build/index.css',
+			true
+		);
+	}
+}
+
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\\symlinks_backend' );
+
+// WP-CLI
 function symlink_is_cli_running() {
 	return defined('WP_CLI') && WP_CLI;
   }
