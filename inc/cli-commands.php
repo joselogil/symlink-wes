@@ -2,22 +2,13 @@
 
 class symlink_cli extends WP_CLI_Command {
 
-    //test version
-    function version() {
-        WP_CLI::line( 'Version of WordPress is ' . get_bloginfo( 'version' ) . '.' );
-    }
-
     function sync() {
-        
         include( WILEY_SYMLINKS_DIR . 'inc/legacy/vars.php' );
-        
         //$result is an array of all symlink values, built in the file vars.php
         if ( ! empty( array_filter( $result ) ) ) {
-            
             $id_array = [];
             $i = 0;
             $symlink_sync = [];
-
             foreach ( $result as $r ) {
                 if ( $r['url'] != '' ) {
                     //get post id from url
@@ -37,17 +28,18 @@ class symlink_cli extends WP_CLI_Command {
                     }
                 }
             }
-
             foreach ($symlink_sync as $key => $value) {
                 //$key is post id
                 //symlinks is the field name
                 //$value is the array with all the legacy symlinks
-                update_post_meta( $key, 'symlinks', $value);
+                //see if field is empty if it's empty update it
+                $symlinks = get_post_meta($key, 'symlinks', true);
+                if (empty($symlinks)) {
+                    update_post_meta( $key, 'symlinks', $value);
+                } 
             }
-
         }
     }
-
 }
 
 WP_CLI::add_command( 'symlink', 'symlink_cli', );
