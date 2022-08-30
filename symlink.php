@@ -33,6 +33,9 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/get-permalink.php' );
 // show other symlinks in admin bar
 include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
 
+// overview plugin page
+include_once( WILEY_SYMLINKS_DIR . 'inc/admin-page.php' );
+
 /**
  * Legacy Affiliate Pages
  */
@@ -40,7 +43,6 @@ include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
 // rewrites + settings page
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-rule.php' );
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/remove-program.php' );
-include_once( WILEY_SYMLINKS_DIR . 'inc/admin-page.php' );
 
 // affiliate helpers
 include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-class.php' );

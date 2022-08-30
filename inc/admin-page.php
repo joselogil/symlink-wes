@@ -32,7 +32,7 @@ function symlinks_page() {
 	include( WILEY_SYMLINKS_DIR . 'inc/legacy/vars.php' );
 ?>
 
-<div class="wrap" id="tealium-2-wes">
+<div class="wrap" id="symlink-wes">
 
 	<h1 class="wp-heading-inline">Symlinks - WES</h1>
 
