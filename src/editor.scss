@@ -1,0 +1,126 @@
+html {
+	--symlinks-admin-color--warning: #f0b849;
+}
+
+.sym-c-disclosure {
+	--c-disclosure--space: 0.5rem;
+
+	// background-color: #f0f0f0;
+	border: 2px solid #ddd;
+	border-radius: 0.25rem;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: var(--c-disclosure--space);
+		padding: var(--c-disclosure--space);
+
+		> * {
+			margin: 0;
+		}
+	}
+
+	&__icon {
+		cursor: help;
+		display: flex;
+	}
+
+	&__text {
+		flex: 1;
+	}
+
+	&__trigger {
+		width: 2rem;
+		height: 2rem;
+		display: block;
+		border: none;
+		background-color: transparent;
+		padding: 0.25rem;
+		border-radius: 0.25rem;
+		color: inherit;
+		font-family: inherit;
+		font-size: inherit;
+		appearance: none;
+		cursor: pointer;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--wp-admin-theme-color);
+		}
+	}
+
+	&__panel {
+		padding: var(--c-disclosure--space);
+		padding-block-start: calc(var(--c-disclosure--space) / 2);
+
+		> * {
+			margin-block-start: 0;
+			margin-block-end: var(--c-disclosure--space);
+		}
+
+		> *:last-child {
+			margin-block-end: 0;
+		}
+	}
+}
+
+.sym-c-symlink-editor {
+	$self: ".c-symlink-editor";
+
+	&__type .components-input-control__container {
+		flex: 0 1 max-content;
+	}
+
+	&__warnings {
+		list-style: none;
+		padding-inline-start: none;
+
+		> li > .sym-c-inline-icon:first-child {
+			color: var(--symlinks-admin-color--warning);
+		}
+	}
+
+	&__delete {
+	}
+}
+
+.sym-c-symlinks-sidebar {
+	&__list {
+		> *:not(:first-child) {
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+.sym-c-warning-label {
+	color: #1e1e1e;
+	background-color: var(--symlinks-admin-color--warning);
+	border-radius: 3px;
+	padding: 1px 0.375rem;
+}
+
+.sym-c-inline-icon {
+	font-size: inherit;
+	width: 1em;
+	height: 1em;
+	line-height: inherit;
+	vertical-align: -0.125em;
+	fill: currentColor;
+}
+
+table.form-table_post_list  {
+	border:1px solid #c3c4c7;
+	border-collapse: collapse;
+	width:100%;
+	td, td * {
+    	vertical-align: top;
+	}
+	td, th {
+		border:1px solid #c3c4c7;
+		padding:10px;
+		text-align:left;
+	}
+	thead, tbody tr:nth-child(even) {
+		background:#e5e5e5;
+	}
+}

@@ -1,63 +1,73 @@
 <?php
 /*
-Plugin Name: Symlinks Builder - WES
+Plugin Name: Symlinks
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 1.2.4
-Author: <a href="mailto:jgil@wiley.com">jgil@wiley.com</a>
+Version: 2.0
+Author: <a href="mailto:krank@wiley.com">krank@wiley.com</a> 
 */
 
-//load plugin menu in dashboard
-add_action('admin_menu', 'symlinks_menu');
+namespace Wiley\Symlinks;
 
-// Create WordPress admin menu
-function symlinks_menu(){
-  $page_title = 'Symlinks Builder - WES';
-  $menu_title = 'Symlinks - WES';
-  $capability = 'manage_options';
-  $menu_slug  = 'symlinks-wes';
-  $function   = 'symlinks_page';
-  $icon_url   = 'dashicons-media-code';
-  $position   = 50;
+defined( 'WILEY_SYMLINKS_DIR' ) or define( 'WILEY_SYMLINKS_DIR', plugin_dir_path( __FILE__ ) );
+defined( 'WILEY_SYMLINKS_URL' ) or define( 'WILEY_SYMLINKS_URL', plugin_dir_url( __FILE__ ) );
+defined( 'WILEY_SYMLINKS_FILE' ) or define( 'WILEY_SYMLINKS_FILE', plugin_basename( __FILE__ ) );
 
-  add_options_page(
-    $page_title,
-    $menu_title,
-    $capability,
-    $menu_slug,
-    $function,
-    $icon_url,
-    $position
- );
-
- // Call update_extra_post_info function to update database
- add_action( 'admin_init', 'update_symlinks' );
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-// Create function to register plugin settings in the database
-function update_symlinks() {
-  register_setting( 'symlinks-settings', 'remove_programs' );
-  register_setting( 'symlinks-settings', 'current_url' );
-  register_setting( 'symlinks-settings', 'symlink_url' );
-  register_setting( 'symlinks-settings', 'enabled' );
+
+// WP admin stuff to manage the URL data
+include_once( WILEY_SYMLINKS_DIR . 'inc/sidebar.php' );
+
+// bridge between admin data and rewrites: flush rewrites when a symlink is updated
+include_once( WILEY_SYMLINKS_DIR . 'inc/flush.php' );
+
+// actual URL rewrites
+include_once( WILEY_SYMLINKS_DIR . 'inc/rewrites.php' );
+
+// modify permalinks of "child" when on a "parent"
+include_once( WILEY_SYMLINKS_DIR . 'inc/get-permalink.php' );
+
+// show other symlinks in admin bar
+include_once( WILEY_SYMLINKS_DIR . 'inc/admin-bar.php' );
+
+// overview plugin page
+include_once( WILEY_SYMLINKS_DIR . 'inc/admin-page.php' );
+
+/**
+ * Legacy Affiliate Pages
+ */
+
+// rewrites + settings page
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-rule.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/remove-program.php' );
+
+// affiliate helpers
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-class.php' );
+include_once( WILEY_SYMLINKS_DIR . 'inc/legacy/af-helpers.php' );
+
+// backend CSS 
+function symlinks_backend( $hook_suffix ) {
+
+	if ( $hook_suffix == 'settings_page_symlinks-wes' ) {
+
+		wp_enqueue_style(
+			'simlinks-css',
+			WILEY_SYMLINKS_DIR . 'build/index.css',
+			true
+		);
+	}
 }
 
-// Create WordPress plugin page
-include( plugin_dir_path( __FILE__ ) . 'inc/symlink_page.php');
-//remove programs/ from program url
-include( plugin_dir_path( __FILE__ ) . 'inc/remove_program.php');
-//rewrite rule from input values
-include( plugin_dir_path( __FILE__ ) . 'inc/af_rule.php');
-//add class to body
-include( plugin_dir_path( __FILE__ ) . 'inc/af_class.php');
-//helper classes for content
-include( plugin_dir_path( __FILE__ ) . 'inc/af_helpers.php');
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\\symlinks_backend' );
 
-//setting link
-function symlinks_settings_link( $links ) {
-  $settings_link = '<a href="options-general.php?page=symlinks-wes">' . __( 'Settings' ) . '</a>';
-  array_push( $links, $settings_link );
-  return $links;
-}
-
-$plugin = plugin_basename( __FILE__ );
-add_filter( "plugin_action_links_$plugin", 'symlinks_settings_link' );
+// WP-CLI
+function symlink_is_cli_running() {
+	return defined('WP_CLI') && WP_CLI;
+  }
+  
+if (symlink_is_cli_running()) {
+	include_once( WILEY_SYMLINKS_DIR . 'inc/cli-commands.php' );
+} 
