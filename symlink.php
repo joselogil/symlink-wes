@@ -2,7 +2,7 @@
 /*
 Plugin Name: Symlinks
 Description: Create an alias -or multiple- for any post type & Disable /programs/ from url
-Version: 1.3.0-dev.sjm-2169.2
+Version: 2.0
 Author: <a href="mailto:krank@wiley.com">krank@wiley.com</a> 
 */
 
