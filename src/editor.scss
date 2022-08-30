@@ -107,3 +107,20 @@ html {
 	vertical-align: -0.125em;
 	fill: currentColor;
 }
+
+table.form-table_post_list  {
+	border:1px solid #c3c4c7;
+	border-collapse: collapse;
+	width:100%;
+	td, td * {
+    	vertical-align: top;
+	}
+	td, th {
+		border:1px solid #c3c4c7;
+		padding:10px;
+		text-align:left;
+	}
+	thead, tbody tr:nth-child(even) {
+		background:#e5e5e5;
+	}
+}

@@ -25,6 +25,7 @@ function admin_bar_symlink_list( $admin_bar ) {
 
 			// get canonical first
 			$canonical_link = parse_url( get_permalink( $id ) );
+			(str_ends_with($canonical_link['path'], "/")) ? $slash = '/' : $slash = '';
 
 			$admin_bar->add_menu(
 				array(
@@ -37,7 +38,7 @@ function admin_bar_symlink_list( $admin_bar ) {
 
 			// then list others
 			foreach ( $symlinks as $key => $symlink ) {
-				$path = '/' . generate_path( $symlink, $id ) . '/';
+				$path = '/' . generate_path( $symlink, $id ) . $slash;
 				$admin_bar->add_menu(
 					array(
 						'id'     => 'symlink-' . $key,
