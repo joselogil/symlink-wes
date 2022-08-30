@@ -1,5 +1,8 @@
 # symlink-wes
 
+# important
+this plugin have been moved to github.com/wiley/symlink-wes
+
 Create one or more additional URL aliases for posts in WordPress.
 
 This plugin adds a new panel to the post settings sidebar that allows for additional custom URLs that point to the post, similar to symbolic links (symlinks for short) in most operating systems. These URLs can be totally custom, or built on top of a separate post's permalink, which will act as a sort of "parent".
